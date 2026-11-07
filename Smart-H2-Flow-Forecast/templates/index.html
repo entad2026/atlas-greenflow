@@ -1,0 +1,304 @@
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta name="theme-color" content="#07334a">
+  <meta name="description" content="Smart H2 Flow Forecast - Renewable Energy Management Platform">
+
+  <title>Smart H2 Flow Forecast | Green Energy Platform</title>
+
+  <link rel="icon" type="image/png"
+        href="{{ url_for('static', filename='logo.png') }}">
+
+  <link rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}">
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<header class="topbar">
+
+  <div class="brand">
+
+    <img
+      src="{{ url_for('static', filename='logo.png') }}"
+      alt="Smart H2 Flow Forecast Logo"
+      class="brand-logo"
+    >
+
+    <div class="brand-text">
+      <strong>Smart H2 Flow</strong>
+      <small>FORECAST · GREEN ENERGY</small>
+    </div>
+
+  </div>
+
+  <div class="toolbar">
+
+    <label class="sr-only" for="language">Language</label>
+
+    <select id="language" aria-label="Language">
+      <option value="en">English</option>
+      <option value="fr">Français</option>
+      <option value="ar">العربية</option>
+    </select>
+
+    <span class="live-dot"></span>
+    <span data-i18n="live">Live dashboard</span>
+
+  </div>
+
+</header>
+
+<main class="container">
+
+  <section class="hero">
+
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">
+        RENEWABLE ENERGY MANAGEMENT
+      </p>
+
+      <h1 data-i18n="heading">
+        Smart energy. Smarter hydrogen.
+      </h1>
+
+      <p class="muted" data-i18n="intro">
+        Monitor solar and wind production, demand and green hydrogen flow.
+      </p>
+    </div>
+
+    <div class="controls">
+
+      <label for="city" data-i18n="city">Moroccan city</label>
+
+      <select id="city">
+        {% for city in cities %}
+        <option value="{{ city }}">{{ city }}</option>
+        {% endfor %}
+      </select>
+
+      <label for="horizon" data-i18n="horizon">Forecast</label>
+
+      <select id="horizon">
+        <option value="24">24 h</option>
+        <option value="48">48 h</option>
+      </select>
+
+    </div>
+
+  </section>
+
+  <!-- WEATHER -->
+
+  <section class="weather-strip">
+
+    <div>
+      <span class="weather-icon">☀</span>
+      <div>
+        <small data-i18n="temperature">Temperature</small>
+        <strong id="temperature">-- °C</strong>
+      </div>
+    </div>
+
+    <div>
+      <span class="weather-icon">☁</span>
+      <div>
+        <small data-i18n="cloud">Cloud cover</small>
+        <strong id="cloud">-- %</strong>
+      </div>
+    </div>
+
+    <div>
+      <span class="weather-icon">〰</span>
+      <div>
+        <small data-i18n="windSpeed">Wind speed</small>
+        <strong id="windSpeed">-- km/h</strong>
+      </div>
+    </div>
+
+    <div class="weather-source">
+      <small data-i18n="weatherSource">Weather source</small>
+      <strong id="weatherSource">--</strong>
+    </div>
+
+  </section>
+
+  <!-- SYSTEM OVERVIEW -->
+
+  <section class="section-head">
+
+    <div>
+      <p class="eyebrow" data-i18n="overview">SYSTEM OVERVIEW</p>
+      <h2 data-i18n="performance">Energy performance</h2>
+    </div>
+
+    <span class="updated" id="updated">--</span>
+
+  </section>
+
+  <!-- ENERGY INDICATORS -->
+
+  <section class="kpi-grid">
+
+    <article class="kpi">
+      <div class="kpi-label">
+        <span class="kpi-icon sun">☀</span>
+        <span data-i18n="solar">Solar production</span>
+      </div>
+      <strong id="solarKpi">--</strong>
+      <small>kWh · <span data-i18n="forecastTotal">forecast total</span></small>
+    </article>
+
+    <article class="kpi">
+      <div class="kpi-label">
+        <span class="kpi-icon wind">〰</span>
+        <span data-i18n="wind">Wind production</span>
+      </div>
+      <strong id="windKpi">--</strong>
+      <small>kWh · <span data-i18n="forecastTotal">forecast total</span></small>
+    </article>
+
+    <article class="kpi">
+      <div class="kpi-label">
+        <span class="kpi-icon demand">↗</span>
+        <span data-i18n="demand">Energy demand</span>
+      </div>
+      <strong id="demandKpi">--</strong>
+      <small>kWh · <span data-i18n="forecastTotal">forecast total</span></small>
+    </article>
+
+    <article class="kpi">
+      <div class="kpi-label">
+        <span class="kpi-icon hydrogen">H₂</span>
+        <span data-i18n="hydrogen">Green hydrogen</span>
+      </div>
+      <strong id="hydrogenKpi">--</strong>
+      <small>kg · <span data-i18n="estimated">estimated</span></small>
+    </article>
+
+  </section>
+
+  <!-- CHART AND OPTIMIZER -->
+
+  <section class="content-grid">
+
+    <article class="panel chart-panel">
+
+      <div class="panel-head">
+        <div>
+          <h3 data-i18n="productionDemand">Production vs demand</h3>
+          <p data-i18n="productionDesc">Hourly renewable energy balance</p>
+        </div>
+        <span class="pill">kWh</span>
+      </div>
+
+      <canvas id="energyChart"></canvas>
+
+    </article>
+
+    <article class="panel optimizer">
+
+      <div class="panel-head">
+        <div>
+          <h3 data-i18n="optimizer">Smart optimizer</h3>
+          <p data-i18n="optimizerDesc">Hydrogen storage strategy</p>
+        </div>
+        <span class="spark">✦</span>
+      </div>
+
+      <div class="flow-node">
+        <span class="node-icon">☀</span>
+        <div>
+          <strong data-i18n="renewables">Renewables</strong>
+          <small data-i18n="renewablesDesc">Solar + wind generation</small>
+        </div>
+        <b id="renewableTotal">-- kWh</b>
+      </div>
+
+      <div class="flow-arrow">↓</div>
+
+      <div class="flow-node">
+        <span class="node-icon electrolyzer">⚡</span>
+        <div>
+          <strong data-i18n="electrolyzer">Electrolyzer</strong>
+          <small data-i18n="electrolyzerDesc">Surplus electricity → H₂</small>
+        </div>
+        <b data-i18n="smartDispatch">Smart dispatch</b>
+      </div>
+
+      <div class="flow-arrow">↓</div>
+
+      <div class="flow-node">
+        <span class="node-icon storage">▤</span>
+        <div>
+          <strong data-i18n="storage">Hydrogen storage</strong>
+          <small data-i18n="storageLevel">Illustrative stored energy</small>
+        </div>
+        <b id="storageKpi">-- kWh</b>
+      </div>
+
+      <div class="status-line">
+        <span data-i18n="systemStatus">System status</span>
+        <strong id="systemStatus" class="status balanced">--</strong>
+      </div>
+
+    </article>
+
+  </section>
+
+  <!-- FORECAST TABLE -->
+
+  <section class="panel forecast-panel">
+
+    <div class="panel-head">
+      <div>
+        <h3 data-i18n="forecastTitle">Forecast details</h3>
+        <p data-i18n="forecastDesc">
+          Expected hourly generation and operating condition
+        </p>
+      </div>
+      <span class="pill" id="forecastBadge">24 h</span>
+    </div>
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th data-i18n="time">Time</th>
+            <th data-i18n="solar">Solar</th>
+            <th data-i18n="wind">Wind</th>
+            <th data-i18n="demand">Demand</th>
+            <th data-i18n="hydrogen">H₂ production</th>
+            <th data-i18n="status">Status</th>
+          </tr>
+        </thead>
+
+        <tbody id="forecastRows"></tbody>
+
+      </table>
+
+    </div>
+
+  </section>
+
+  <footer>
+    <span>Smart H2 Flow Forecast</span>
+    <span data-i18n="disclaimer">
+      Educational prototype · Energy and hydrogen values are simplified estimates.
+    </span>
+  </footer>
+
+</main>
+
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+
+</body>
+</html>
